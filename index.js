@@ -12,6 +12,8 @@ app.get('/', (req, res) => {
     res.send('<h1>Express + Firestore</h1>')
 })
 
-app.listen(3210, () => {
-    console.log('running on port 3210')
+const PORT = 3210
+
+app.listen(PORT, () => {
+    console.log(`running on https://localhost:${PORT}`)
 })
