@@ -6,6 +6,13 @@ var watchlist = require('./api/watchlist')
 var app = express()
 app.use(cors())
 app.use(bodyParser.json())
+app.use(function (req, res, next) {
+    res.setHeader('charset', 'utf-8')
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    next();
+});
+
 app.use("/api/watchlist", watchlist)
 
 app.get('/', (req, res) => {
