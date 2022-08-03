@@ -5,10 +5,10 @@ var db = fire.firestore()
 
 router.use(bodyParser.json())
 
-router.get('/data', (req, res) => {
-    // db.settings({
-    //     timestampsInSnapshots: true
-    // })
+router.get('/', (req, res) => {
+    db.settings({
+        timestampsInSnapshots: true
+    })
     var allData = []
     db.collection('watchlist').get()
         .then(snapshot => {
