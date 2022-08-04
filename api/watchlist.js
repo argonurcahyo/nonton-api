@@ -69,6 +69,8 @@ router.post('/movie', (req, res) => {
             console.log(error)
             return res.status(500).json({ error: error.code })
           })
+      } else {
+        return res.status(500).json({ error: "Duplicate ID" })
       }
     })
     .catch(error => {
