@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
 
 router.get('/movie/:id', (req, res) => {
   db.collection('watchlist')
-    .where('id', '==', `${req.params.id}`)
+    .where('id', '==', parseInt(req.params.id))
     .get()
     .then(snapshot => {
       if (snapshot.docs.length > 0) {
@@ -76,26 +76,6 @@ router.post('/movie', (req, res) => {
       console.log(error)
       return res.status(500).json({ error: error })
     })
-  // .then(snapshot => {
-  //   if (snapshot.docs.length === 0) {
-  //     console.log('duplicate')
-  //     db.collection('watchlist')
-  //       .add(newWatchlist)
-  //       .then(() => {
-  //         return res.json(newWatchlist)
-  //       })
-  //       .catch(error => {
-  //         console.log(error)
-  //         return res.status(500).json({ error: error.code })
-  //       })
-  //   } else {
-  //     return res.status(500).json({ error: "Duplicate ID" })
-  //   }
-  // })
-  // .catch(error => {
-  //   console.log(error)
-  //   return res.status(500).json({ error: error.code })
-  // })
 })
 
 router.put('/movie/:id', (req, res) => {
@@ -116,10 +96,10 @@ router.put('/movie/:id', (req, res) => {
 
 router.delete('/movie/:id', (req, res) => {
   let document = db.collection('watchlist')
-    .where('id', '==', `${req.params.id}`)
+    .where('id', '==', parseInt(req.params.id))
   document.get()
     .then(snapshot => {
-      if (snapshot) {
+      if (snapshot.docs.length > 0) {
         snapshot.docs[0].ref.delete()
         return res.json({ message: `Deleted ${req.params.id}` })
       } else {
