@@ -7,7 +7,7 @@ router.use(bodyParser.json())
 
 router.get('/', (req, res) => {
   var allData = []
-  db.collection('watchlist')
+  db.collection('watched')
     .get()
     .then(data => {
       data.forEach(doc => {
@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/movie/:id', (req, res) => {
-  db.collection('watchlist')
+  db.collection('watched')
     .where('id', '==', `${req.params.id}`)
     .get()
     .then(snapshot => {
@@ -43,7 +43,7 @@ router.get('/movie/:id', (req, res) => {
 })
 
 router.post('/movie', (req, res) => {
-  const newWatchlist = {
+  const newData = {
     backdrop_path: req.body.backdrop_path ? req.body.backdrop_path : '',
     genre_ids: req.body.genre_ids ? req.body.genre_ids : [],
     id: req.body.id ? req.body.id : '',
@@ -54,55 +54,35 @@ router.post('/movie', (req, res) => {
     vote_average: req.body.vote_average ? req.body.vote_average : '',
   }
 
-  db.collection('watchlist')
+  db.collection('watched')
     .where('id', '==', `${req.body.id}`)
     .get()
     .then(snapshot => {
-      if (snapshot.docs.length > 0) {
-        return res.status(500).json({ data: `WARNING ${req.body.id} already exist` })
-      } else {
-        db.collection('watchlist')
-          .add(newWatchlist)
+      if (!snapshot.exists) {
+        db.collection('watched')
+          .add(newData)
           .then(() => {
-            return res.json(newWatchlist)
+            return res.json(newData)
           })
           .catch(error => {
             console.log(error)
             return res.status(500).json({ error: error.code })
           })
+      } else {
+        return res.status(500).json({ error: "Duplicate ID" })
       }
     })
     .catch(error => {
       console.log(error)
-      return res.status(500).json({ error: error })
+      return res.status(500).json({ error: error.code })
     })
-  // .then(snapshot => {
-  //   if (snapshot.docs.length === 0) {
-  //     console.log('duplicate')
-  //     db.collection('watchlist')
-  //       .add(newWatchlist)
-  //       .then(() => {
-  //         return res.json(newWatchlist)
-  //       })
-  //       .catch(error => {
-  //         console.log(error)
-  //         return res.status(500).json({ error: error.code })
-  //       })
-  //   } else {
-  //     return res.status(500).json({ error: "Duplicate ID" })
-  //   }
-  // })
-  // .catch(error => {
-  //   console.log(error)
-  //   return res.status(500).json({ error: error.code })
-  // })
 })
 
 router.put('/movie/:id', (req, res) => {
   if (req.body.id) {
     res.status(403).json({ message: 'Not allowed to edit' })
   }
-  let document = db.collection('watchlist')
+  let document = db.collection('watched')
     .where('id', '==', `${req.params.id}`)
   document.update(req.body)
     .then(() => {
@@ -115,7 +95,7 @@ router.put('/movie/:id', (req, res) => {
 })
 
 router.delete('/movie/:id', (req, res) => {
-  let document = db.collection('watchlist')
+  let document = db.collection('watched')
     .where('id', '==', `${req.params.id}`)
   document.get()
     .then(snapshot => {
