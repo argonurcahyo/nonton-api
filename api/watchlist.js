@@ -59,7 +59,7 @@ router.post('/movie', (req, res) => {
     .where('id', '==', `${req.params.id}`)
     .get()
     .then(snapshot => {
-      if (snapshot.exists) {
+      if (!snapshot.exists) {
         db.collection('watchlist')
           .add(newWatchlist)
           .then(() => {
