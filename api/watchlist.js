@@ -56,15 +56,25 @@ router.post('/movie', (req, res) => {
   }
 
   db.collection('watchlist')
-    .add(newWatchlist)
-    .then(() => {
-      return res.json(newWatchlist)
+    .where('id', '==', `${req.params.id}`)
+    .get()
+    .then(snapshot => {
+      if (snapshot.exists) {
+        db.collection('watchlist')
+          .add(newWatchlist)
+          .then(() => {
+            return res.json(newWatchlist)
+          })
+          .catch(error => {
+            console.log(error)
+            return res.status(500).json({ error: error.code })
+          })
+      }
     })
     .catch(error => {
       console.log(error)
       return res.status(500).json({ error: error.code })
     })
-
 })
 
 router.put('/movie/:id', (req, res) => {
