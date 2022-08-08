@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
 
 router.get('/movie/:id', (req, res) => {
   db.collection('watched')
-    .where('id', '==', `${req.params.id}`)
+    .where('id', '==', parseInt(req.params.id))
     .get()
     .then(snapshot => {
       if (snapshot.docs.length > 0) {
@@ -96,7 +96,7 @@ router.put('/movie/:id', (req, res) => {
 
 router.delete('/movie/:id', (req, res) => {
   let document = db.collection('watched')
-    .where('id', '==', `${req.params.id}`)
+    .where('id', '==', parseInt(req.params.id))
   document.get()
     .then(snapshot => {
       if (snapshot) {
