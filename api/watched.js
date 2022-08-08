@@ -8,6 +8,7 @@ router.use(bodyParser.json())
 router.get('/', (req, res) => {
   var allData = []
   db.collection('watched')
+    .orderBy('id', 'asc')
     .get()
     .then(data => {
       data.forEach(doc => {
